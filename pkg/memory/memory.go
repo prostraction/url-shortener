@@ -1,0 +1,38 @@
+package urlshort
+
+import (
+	"errors"
+	"fmt"
+	hashfunc "urlshort/pkg/hashfunc"
+)
+
+func FromHash(hmap map[string]string, hashBaseEnc string) (string, error) {
+	if hmap == nil {
+		return "", errors.New("memory: FromHash(): hash table is nil")
+	}
+	if value, exists := hmap[hashBaseEnc]; exists {
+		return value, nil
+	} else {
+		return "", fmt.Errorf(`no url for hash "%s" found`, hashBaseEnc)
+	}
+}
+
+func ToHash(hmap map[string]string, url string) (hashBaseEnc string, err error) {
+	if hmap == nil {
+		return "", errors.New("memory: ToHash(): hash table is nil")
+	}
+	hashBaseEnc = hashfunc.GetBaseEnc(url)
+	for i := 10; i < 32; i++ {
+		if value, exists := hmap[hashBaseEnc[i-10:i]]; exists {
+			if url == value {
+				/* This URL is already on hash rable */
+				return hashBaseEnc[i-10 : i], errors.New("url is already on hash table")
+			}
+		} else {
+			hmap[hashBaseEnc[i-10:i]] = url
+			return hashBaseEnc[i-10 : i], nil
+		}
+	}
+	/* Collision not resolved */
+	return "", errors.New("collision not resolved")
+}
