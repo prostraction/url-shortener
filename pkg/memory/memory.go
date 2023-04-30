@@ -1,19 +1,19 @@
-package urlshort
+package memory
 
 import (
 	"errors"
 	"fmt"
-	hashfunc "urlshort/pkg/hashfunc"
+	"urlshort/pkg/hashfunc"
 )
 
-func FromHash(hmap map[string]string, hashBaseEnc string) (string, error) {
+func FromHash(hmap map[string]string, hash string) (string, error) {
 	if hmap == nil {
 		return "", errors.New("memory: FromHash(): hash table is nil")
 	}
-	if value, exists := hmap[hashBaseEnc]; exists {
+	if value, exists := hmap[hash]; exists {
 		return value, nil
 	} else {
-		return "", fmt.Errorf(`no url for hash "%s" found`, hashBaseEnc)
+		return "", fmt.Errorf(`no url for hash "%s" found`, hash)
 	}
 }
 

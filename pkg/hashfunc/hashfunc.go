@@ -1,4 +1,4 @@
-package urlshort
+package hashfunc
 
 import (
 	"crypto/sha256"
@@ -7,7 +7,7 @@ import (
 )
 
 func GetBaseEnc(url string) string {
-	// We can use any hash function, sha256 is good vs collisiions
+	// We can use any hash function, sha256 is good against collisiions
 	sum := sha256.Sum256([]byte(url))
 	// Use base64 for converting [0-9][a-f] to [0-9][a-z][A-Z]
 	// Of course, base58/62 may be used. But base64 is std package
