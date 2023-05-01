@@ -46,9 +46,11 @@ func (db *DB) ToHash(url string) (string, error) {
 	for i := 10; i < 32; i++ {
 		if value, exists := db.FromHash(hash[i-10 : i]); exists != nil && exists.Error() == "no rows in result set" {
 			err := db.con.QueryRow(context.Background(),
-				`INSERT INTO url (full_link, short_link) VALUES ($1, $2) RETURNING short_link;`, url, hash[i-10:i]).Scan(&hash)
+				`INSERT INTO url (full_link, short_link) VALUES ($1, $2) RETURNING short_link;`,
+				url, hash[i-10:i]).Scan(&hash)
 			return hash, err
 		} else if value == url {
+			/* This URL is already on hash rable */
 			return hash[i-10 : i], fmt.Errorf("url is already on hash table (%s)", hash[i-10:i])
 		}
 	}

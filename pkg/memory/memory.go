@@ -24,7 +24,7 @@ func ToHash(hmap map[string]string, url string) (hashBaseEnc string, err error) 
 	hashBaseEnc = hashfunc.GetBaseEnc(url)
 	for i := 10; i < 32; i++ {
 		if value, exists := hmap[hashBaseEnc[i-10:i]]; exists {
-			if url == value {
+			if value == url {
 				/* This URL is already on hash rable */
 				return hashBaseEnc[i-10 : i], errors.New("url is already on hash table")
 			}
@@ -33,6 +33,5 @@ func ToHash(hmap map[string]string, url string) (hashBaseEnc string, err error) 
 			return hashBaseEnc[i-10 : i], nil
 		}
 	}
-	/* Collision not resolved */
 	return "", errors.New("collision not resolved")
 }

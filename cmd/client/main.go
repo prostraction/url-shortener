@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
-	"urlshort/pkg/api"
+	"urlshort/internal/api"
 
 	"google.golang.org/grpc"
 )

@@ -3,12 +3,16 @@ version: '3.8'
 services:
   urlshort:
     build: ./
-    command: ./urlshort
+    command: ./bin/server
     ports:
-      - 50001:50001
+      - "127.0.0.1:50001:50001"
+      - "127.0.0.1:50002:50002"
     depends_on:
       - db
     environment:
+      - GPRC_PORT=50001
+      - GPRC_GATEWAY_PORT=50002
+      - POSTGRES_PORT=5432
       #- DB_URL="user=postgres password=postgres host=db port=5432 dbname=url"
       - DB_URL=postgres://postgres:postgres@db:5432/url
       - DB_PASSWORD=postgres

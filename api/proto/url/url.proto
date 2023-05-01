@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package api;
+option go_package = "internal/api";
+import "google/api/annotations.proto";
+
+service URL {
+    rpc ToShortLink(FullURL) returns (ShortURL) {
+        option (google.api.http) = {
+            post: "/post"
+            body: "*"
+        };
+    }
+    rpc ToFullLink(ShortURL) returns (FullURL) {
+        option (google.api.http) = {
+            get: "/get/{Value}"
+        };
+    }
+}
+
+message FullURL {
+    string Value = 1;
+}
+
+message ShortURL {
+    string Value = 1;
+}
+
