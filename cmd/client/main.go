@@ -12,6 +12,7 @@ import (
 )
 
 func main() {
+	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
 	flag.Parse()
 	// TO DO
 	if flag.NArg() < 2 {

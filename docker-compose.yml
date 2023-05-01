@@ -3,7 +3,7 @@ version: '3.8'
 services:
   urlshort:
     build: ./
-    command: ./bin/server
+    command: ./scripts/wait-for-postgres.sh db ./bin/server
     ports:
       - "127.0.0.1:50001:50001"
       - "127.0.0.1:50002:50002"
@@ -26,4 +26,4 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_DB: url
     ports:
-      - 5432:5432
+      - 5436:5432

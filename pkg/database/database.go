@@ -11,7 +11,8 @@ import (
 )
 
 type DB struct {
-	con *pgxpool.Pool
+	con   *pgxpool.Pool
+	Table string
 }
 
 func (db *DB) ConnectDB() (err error) {
@@ -19,14 +20,15 @@ func (db *DB) ConnectDB() (err error) {
 	return err
 }
 
-func (db *DB) CreateTableDB() (err error) {
-	err = db.con.QueryRow(context.Background(),
-		`CREATE TABLE IF NOT EXISTS url (id SERIAL, full_link text, short_link text);`).Scan()
+func (db *DB) CreateTableDB(table string) (err error) {
+	db.Table = table
+	query := `CREATE TABLE IF NOT EXISTS ` + table + ` (id SERIAL, full_link text, short_link text);`
+	err = db.con.QueryRow(context.Background(), query).Scan()
 	if err != nil && err.Error() != "no rows in result set" {
 		return
 	}
-	err = db.con.QueryRow(context.Background(),
-		`CREATE INDEX IF NOT EXISTS ind ON url USING HASH (full_link);`).Scan()
+	query = `CREATE INDEX IF NOT EXISTS ind ON ` + table + ` USING HASH (full_link);`
+	err = db.con.QueryRow(context.Background(), query).Scan()
 	if err != nil && err.Error() != "no rows in result set" {
 		return
 	} else {
@@ -36,18 +38,17 @@ func (db *DB) CreateTableDB() (err error) {
 
 func (db *DB) FromHash(hash string) (string, error) {
 	var url string
-	err := db.con.QueryRow(context.Background(),
-		`SELECT full_link FROM url WHERE short_link = $1`, hash).Scan(&url)
+	query := `SELECT full_link FROM ` + db.Table + ` WHERE short_link = $1`
+	err := db.con.QueryRow(context.Background(), query, hash).Scan(&url)
 	return url, err
 }
 
 func (db *DB) ToHash(url string) (string, error) {
+	query := `INSERT INTO ` + db.Table + ` (full_link, short_link) VALUES ($1, $2) RETURNING short_link;`
 	hash := hashfunc.GetBaseEnc(url)[:10]
 	for i := 10; i < 32; i++ {
 		if value, exists := db.FromHash(hash[i-10 : i]); exists != nil && exists.Error() == "no rows in result set" {
-			err := db.con.QueryRow(context.Background(),
-				`INSERT INTO url (full_link, short_link) VALUES ($1, $2) RETURNING short_link;`,
-				url, hash[i-10:i]).Scan(&hash)
+			err := db.con.QueryRow(context.Background(), query, url, hash[i-10:i]).Scan(&hash)
 			return hash, err
 		} else if value == url {
 			/* This URL is already on hash rable */

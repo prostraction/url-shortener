@@ -2,12 +2,13 @@ package main
 
 import (
 	"context"
+	"flag"
 	"log"
 	"net"
 	"net/http"
 	"os"
 	"urlshort/internal/api"
-	"urlshort/internal/urlshort"
+	"urlshort/internal/urlservice"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
@@ -18,13 +19,6 @@ const (
 	memoryMethod = iota
 	dbMethod
 )
-
-/*
-var (
-	// command-line options:
-	// gRPC server endpoint
-	grpcServerEndpoint = flag.String("grpc-server-endpoint", "localhost:9090", "gRPC server endpoint")
-)*/
 
 func grpcGatewayStart() {
 	conn, err := grpc.DialContext(
@@ -51,7 +45,7 @@ func grpcGatewayStart() {
 	log.Fatal(gwServer.ListenAndServe())
 }
 
-func gprcStart(service *urlshort.Service) {
+func gprcStart(service *urlservice.Service) {
 	grpcServ := grpc.NewServer()
 	api.RegisterURLServer(grpcServ, service)
 	lstn, err := net.Listen("tcp", ":"+os.Getenv("GPRC_PORT"))
@@ -67,16 +61,25 @@ func gprcStart(service *urlshort.Service) {
 }
 
 func main() {
-	log.Println("gRPC server using METHOD to store links")
-	service := &urlshort.Service{}
-	service.HashMap = make(map[string]string)
-	service.Method = dbMethod
-	if service.Method == dbMethod {
-		err := service.InitDB()
+	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
+
+	var method string
+	flag.StringVar(&method, "method", "db", "method used to store hash")
+	flag.Parse()
+	log.Println("gRPC server using " + method + " to store links")
+
+	service := &urlservice.Service{}
+	switch method {
+	case "memory":
+		service.HashMap = make(map[string]string)
+		service.Method = memoryMethod
+	case "db":
+		service.Method = dbMethod
+		table := "url"
+		err := service.InitDbWithTable(table)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
-
 	gprcStart(service)
 }
