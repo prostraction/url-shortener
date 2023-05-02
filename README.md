@@ -9,11 +9,11 @@
 
 ### Методы и вызовы:
 
-Для gRPC:
+**Для gRPC:**
 - `call ToShortLink (Value)`: принимает полный URL, сохраняет полный и короткий URL, возвращает короткий URL
 - `call ToFullLink (Value)`: принимает короткий URL, возвращает полный URL
 
-Для gRPC Gateway:
+**Для gRPC Gateway:**
 - `POST /post`: принимает полный URL в теле запроса (`{"Value"="test-link"}`), возвращает короткий URL
 - `GET /get/{Value}`: где {Value} = короткий URL. Запрос возвращает полный URL
 
@@ -33,13 +33,14 @@ docker-compose run urlshort --method=memory
 
 ### Для получения коротких URL: 
 
-- curl (gRPC Gateway):
+
+- **curl (gRPC Gateway):**
 
 ```
 curl --request POST "http://127.0.0.1:50002/post" -d '{"Value": "test-full-link"}'
 ```
 
-- client.go (gRPC):
+- **client.go (gRPC):**
 
 ```
 go run cmd/client/main.go toShort test-full-link
@@ -47,13 +48,14 @@ go run cmd/client/main.go toShort test-full-link
 
 ### Для получения полных URL:
 
-- curl (gRPC Gateway):
+
+- **curl (gRPC Gateway):**
 
 ```
 curl --request GET "http://127.0.0.1:50002/get/test-short-link"
 ```
 
-- client.go (gRPC):
+- **client.go (gRPC):**
 
 ```
 go run cmd/client/main.go toFull test-short-link
