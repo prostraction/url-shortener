@@ -6,11 +6,13 @@ import (
 	"regexp"
 )
 
+// GetBaseEnc принимает на вход URL и возвращает его хеш, приведенный к Base64
+// Для Base64 строки спец. символы заменены на _
 func GetBaseEnc(url string) string {
-	// We can use any hash function, sha256 is good against collisiions
+	// Мы можем использовать любую хеш функцию, sha256 хороша против коллизий
 	sum := sha256.Sum256([]byte(url))
-	// Use base64 for converting [0-9][a-f] to [0-9][a-z][A-Z]
-	// Of course, base58/62 may be used. But base64 is std package
+	// Используем base64 для конвертации [0-9][a-f] в [0-9][a-z][A-Z]
+	// Можем использовать и base62, конечно, но base64 в std пакете
 	encoded := base64.StdEncoding.EncodeToString(sum[:])
 	re := regexp.MustCompile(`[^a-zA-Z0-9]`)
 	encoded = re.ReplaceAllString(encoded, "_")

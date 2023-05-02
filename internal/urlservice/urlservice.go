@@ -15,12 +15,14 @@ const (
 	dbMethod
 )
 
+// Service добавляет в структуру сервиса метод для хранения URL
 type Service struct {
 	HashMap  map[string]string
 	Database database.DB
 	Method   int
 }
 
+// InitDbWithTable устанавливает соединения с БД и создает таблицу для хранения URL
 func (s *Service) InitDbWithTable(table string) (err error) {
 	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
 	err = s.Database.ConnectDB()
@@ -36,6 +38,7 @@ func (s *Service) InitDbWithTable(table string) (err error) {
 	return err
 }
 
+// ToShortLink имплиментированный метод gRPC, принимает полный URL, возвращает короткий URL
 func (s *Service) ToShortLink(ctx context.Context, req *api.FullURL) (*api.ShortURL, error) {
 	fUrl := req.Value
 	switch s.Method {
@@ -56,6 +59,7 @@ func (s *Service) ToShortLink(ctx context.Context, req *api.FullURL) (*api.Short
 	}
 }
 
+// ToFullLink имплиментированный метод gRPC, принимает короткий URL, возвращает полный URL
 func (s *Service) ToFullLink(ctx context.Context, req *api.ShortURL) (*api.FullURL, error) {
 	sUrl := req.Value
 	switch s.Method {

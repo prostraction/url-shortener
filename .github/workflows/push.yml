@@ -6,6 +6,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build the stack
+<<<<<<< HEAD
         run: docker-compose build urlshort testsuite db
       - name: Test
         run: docker-compose run testsuite db
+=======
+        run: docker-compose build urlshort db
+>>>>>>> c130c3d (Documentation)

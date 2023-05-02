@@ -15,11 +15,13 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
+// методы хранения URL
 const (
 	memoryMethod = iota
 	dbMethod
 )
 
+// grpcGatewayStart вызывается асихронно через grpcStart и открывает gRPC Gateway сервер
 func grpcGatewayStart() {
 	conn, err := grpc.DialContext(
 		context.Background(),
@@ -45,6 +47,7 @@ func grpcGatewayStart() {
 	log.Fatal(gwServer.ListenAndServe())
 }
 
+// gprcStart запускает сервер gRPC (в своей рутине) и сервер gRPC Gateway (в корутине)
 func gprcStart(service *urlservice.Service) {
 	grpcServ := grpc.NewServer()
 	api.RegisterURLServer(grpcServ, service)
@@ -57,11 +60,11 @@ func gprcStart(service *urlservice.Service) {
 	}
 	if err := grpcServ.Serve(lstn); err != nil {
 		log.Fatal(err)
-	} else {
-		log.Println("here")
 	}
 }
 
+// main парсит аргументы программы, запускает соединения с БД (если не запрошен метод хранения в памяти),
+// запускает gRPC и gRPC Gateway серверы
 func main() {
 	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
 

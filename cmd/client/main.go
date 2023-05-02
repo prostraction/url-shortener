@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc"
 )
 
+// main парсит аргументы программы и вызывает методы gRPC саервера
 func main() {
 	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
 	flag.Parse()

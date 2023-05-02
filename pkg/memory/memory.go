@@ -6,6 +6,7 @@ import (
 	"urlshort/pkg/hashfunc"
 )
 
+// FromHash возвращает полный URL из мапы
 func FromHash(hmap map[string]string, hash string) (string, error) {
 	if hmap == nil {
 		return "", errors.New("memory: FromHash(): hash table is nil")
@@ -17,6 +18,7 @@ func FromHash(hmap map[string]string, hash string) (string, error) {
 	}
 }
 
+// ToHash принимает полный URL, вносит полный URL и сокращенный URL в мапу
 func ToHash(hmap map[string]string, url string) (hashBaseEnc string, err error) {
 	if hmap == nil {
 		return "", errors.New("memory: ToHash(): hash table is nil")
