@@ -1,11 +1,8 @@
 version: '3.8'
 services:
-
   testsuite:
-    profiles:
-      - "test"
-    build:
-      dockerfile: Dockerfile.test
+    build: ./
+    dockerfile: Dockerfile.test
     depends_on:
         db:
           condition: service_healthy
