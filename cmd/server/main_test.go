@@ -14,14 +14,14 @@ import (
 func gprcStartTest(service *urlservice.Service, t *testing.T) error {
 	grpcServ := grpc.NewServer()
 	api.RegisterURLServer(grpcServ, service)
-	lstn, err := net.Listen("tcp", ":"+os.Getenv("GPRC_PORT_TEST"))
+	_, err := net.Listen("tcp", ":"+os.Getenv("GPRC_PORT_TEST"))
 	if err != nil {
 		log.Fatal(err)
 	} else {
 		log.Println("gRPC: Started server on port " + os.Getenv("GPRC_PORT_TEST"))
 		go grpcGatewayStart()
 	}
-	return grpcServ.Serve(lstn)
+	return nil
 }
 
 func GRPCCallTest(t *testing.T) {
