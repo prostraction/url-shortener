@@ -57,6 +57,8 @@ func gprcStart(service *urlservice.Service) {
 	}
 	if err := grpcServ.Serve(lstn); err != nil {
 		log.Fatal(err)
+	} else {
+		log.Println("here")
 	}
 }
 
