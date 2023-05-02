@@ -8,12 +8,13 @@ services:
       - "127.0.0.1:50001:50001"
       - "127.0.0.1:50002:50002"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
+      - method=db
       - GPRC_PORT=50001
       - GPRC_GATEWAY_PORT=50002
       - POSTGRES_PORT=5432
-      #- DB_URL="user=postgres password=postgres host=db port=5432 dbname=url"
       - DB_URL=postgres://postgres:postgres@db:5432/url
       - DB_PASSWORD=postgres
   db:
@@ -25,5 +26,11 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
       POSTGRES_DB: url
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "db_prod"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 5s  
     ports:
       - 5436:5432

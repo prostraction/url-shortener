@@ -15,5 +15,4 @@ RUN go mod download
 RUN go build -o ./bin/server ./cmd/server/main.go
 RUN go build -o ./bin/client ./cmd/client/main.go
 
-CMD ["./scripts/wait-for-postgres.sh db"]
-ENTRYPOINT ["./bin/server"]
+ENTRYPOINT [ "./bin/server" ]

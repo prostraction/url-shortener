@@ -8,4 +8,4 @@ jobs:
       - name: Build the stack
         run: docker-compose up -d
       - name: Test
-        run: docker-compose run urlshort db
+        command: bash -c "pwd && go get -d -v && go test --cover -v ./... && go build -v -o server"
