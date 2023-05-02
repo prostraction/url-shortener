@@ -6,6 +6,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build the stack
-        run: docker-compose up -d
+        run: docker compose build
       - name: Test
-        command: bash -c "pwd && go get -d -v && go test --cover -v ./... && go build -v -o server"
+        run: docker-compose run --rm testsuite

@@ -1,9 +1,25 @@
 version: '3.8'
-
 services:
+
+  testsuite:
+    profiles:
+      - "test"
+    build:
+      dockerfile: Dockerfile.test
+    depends_on:
+        db:
+          condition: service_healthy
+    environment:
+      - method=db
+      - GPRC_PORT=50001
+      - GPRC_GATEWAY_PORT=50002
+      - POSTGRES_PORT=5432
+      - DB_URL=postgres://postgres:postgres@db:5432/url
+      - DB_PASSWORD=postgres
+
   urlshort:
     build: ./
-    command: ./scripts/wait-for-postgres.sh db ./bin/server
+    command: ./bin/server
     ports:
       - "127.0.0.1:50001:50001"
       - "127.0.0.1:50002:50002"
@@ -17,6 +33,7 @@ services:
       - POSTGRES_PORT=5432
       - DB_URL=postgres://postgres:postgres@db:5432/url
       - DB_PASSWORD=postgres
+
   db:
     restart: always
     image: postgres:latest
@@ -24,6 +41,7 @@ services:
       - ./.database/postgres/data:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: postgres
+      PGUSER: postgres
       POSTGRES_USER: postgres
       POSTGRES_DB: url
     healthcheck:
