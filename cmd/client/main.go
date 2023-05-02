@@ -5,25 +5,27 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"strings"
 	"urlshort/internal/api"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 // main парсит аргументы программы и вызывает методы gRPC саервера
 func main() {
 	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
+
 	flag.Parse()
-	// TO DO
 	if flag.NArg() < 2 {
-		log.Fatal("not enough arguments")
+		log.Fatal("Not enough arguments. Syntax: (toShort URL | toFull URL)")
 	}
 
 	operation := flag.Arg(0)
 	url := flag.Arg(1)
 
-	conn, err := grpc.Dial(":50001", grpc.WithInsecure())
+	conn, err := grpc.Dial(":"+os.Getenv("GPRC_PORT"), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatal(err)
 	}

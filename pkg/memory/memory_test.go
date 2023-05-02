@@ -1,6 +1,7 @@
 package memory
 
 import (
+	"log"
 	"strings"
 	"testing"
 )
@@ -24,14 +25,12 @@ func OneLetterDubTest(hashMap map[string]string, t *testing.T) {
 }
 func MoveAlphabetTest(hashMap map[string]string, t *testing.T) {
 	alphabet := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-/_"
-	for i := 0; ; i++ {
+	for i := 0; i < 300000; i++ {
 		want := (alphabet + alphabet)[:100]
 		want = want[i%100:] + want[:i%100]
 		hash, err := ToHash(hashMap, want)
 
-		if err != nil && err.Error() == "url is already on hash table" {
-			return
-		} else if err != nil {
+		if err != nil {
 			t.Fatal(err, want)
 		}
 		url, err := FromHash(hashMap, hash)
@@ -74,27 +73,6 @@ func TwoLetterTest(hashMap map[string]string, t *testing.T) {
 	}
 }
 
-func DublicateWordsTest(hashMap map[string]string, t *testing.T) {
-	wantArr := []string{"word", "word", "one", "one", "dublicate", "dublicate"}
-	key := 0
-	for _, want := range wantArr {
-		hash, err := ToHash(hashMap, want)
-		if key%2 == 1 && err == nil {
-			t.Fatal("No dublicate error")
-		}
-		if err != nil && err.Error() != "url is already on hash table" {
-			t.Fatal(want, hash, err)
-		}
-		url, err := FromHash(hashMap, hash)
-		if err != nil {
-			t.Fatal(url, hash, err)
-		}
-		if url != want {
-			t.Fatal("hash mismatch!", url, " != ", want)
-		}
-	}
-}
-
 func SentenceTest(hashMap map[string]string, t *testing.T) {
 	wantArr := []string{
 		"testing word", "word testing",
@@ -119,11 +97,14 @@ func SentenceTest(hashMap map[string]string, t *testing.T) {
 }
 
 func TestHashTableText(t *testing.T) {
+	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
 	hashMap := make(map[string]string)
-
+	log.Println("OneLetterDubTest")
 	OneLetterDubTest(hashMap, t)
+	log.Println("MoveAlphabetTest")
 	MoveAlphabetTest(hashMap, t)
+	log.Println("TwoLetterTest")
 	TwoLetterTest(hashMap, t)
-	DublicateWordsTest(hashMap, t)
+	log.Println("SentenceTest")
 	SentenceTest(hashMap, t)
 }

@@ -27,13 +27,15 @@ func ToHash(hmap map[string]string, url string) (hashBaseEnc string, err error) 
 	for i := 10; i < 32; i++ {
 		if value, exists := hmap[hashBaseEnc[i-10:i]]; exists {
 			if value == url {
-				/* This URL is already on hash rable */
-				return hashBaseEnc[i-10 : i], errors.New("url is already on hash table")
+				// Этот URL уже записан в БД. По идее, это не должно считаться ошибкой
+				return hashBaseEnc[i-10 : i], nil
+				//return hashBaseEnc[i-10 : i], errors.New("url is already on hash table")
 			}
 		} else {
 			hmap[hashBaseEnc[i-10:i]] = url
 			return hashBaseEnc[i-10 : i], nil
 		}
 	}
+	// Почти невозможный случай
 	return "", errors.New("collision not resolved")
 }
