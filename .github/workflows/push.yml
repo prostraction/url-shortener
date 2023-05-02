@@ -6,6 +6,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build the stack
-        run: docker-compose build
+        run: docker-compose build -d
       - name: Test
         run: docker-compose run testsuite db
