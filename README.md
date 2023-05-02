@@ -5,7 +5,7 @@
 
 Данное решение использует по умолчанию следующие порты (задаются в docker-compose.yml):
 - `:50001` порт для сервера gRPC
-- `:50002` порт для сервера gRPC Gateway
+- `:50002` порт для сервера gRPC Gateway (HTTP)
 
 ### Методы и вызовы:
 
@@ -33,13 +33,13 @@ docker-compose run urlshort --method=memory
 
 ### Для получения коротких URL: 
 
-curl (gRPC Gateway):
+- curl (gRPC Gateway):
 
 ```
 curl --request POST "http://127.0.0.1:50002/post" -d '{"Value": "test-full-link"}'
 ```
 
-client.go (gRPC):
+- client.go (gRPC):
 
 ```
 go run cmd/client/main.go toShort test-full-link
@@ -47,13 +47,13 @@ go run cmd/client/main.go toShort test-full-link
 
 ### Для получения полных URL:
 
-curl (gRPC Gateway):
+- curl (gRPC Gateway):
 
 ```
 curl --request GET "http://127.0.0.1:50002/get/test-short-link"
 ```
 
-client.go (gRPC):
+- client.go (gRPC):
 
 ```
 go run cmd/client/main.go toFull test-short-link
