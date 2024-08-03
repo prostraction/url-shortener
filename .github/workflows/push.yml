@@ -6,6 +6,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build
-        run: docker-compose build urlshort db
+        run: docker compose build urlshort db
       - name: Test
-        run: docker-compose run --entrypoint "go test ./... -v" urlshort
+        run: docker compose run --entrypoint "go test ./... -v" urlshort
